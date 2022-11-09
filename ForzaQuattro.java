@@ -1,18 +1,84 @@
 class ForzaQuattro {
-    static void menu()
+    //----------------- MENU -----------------
+    static void menu(int[][] mat, int turn)
     {
+        int key;
         
+        //stampo grafica + input
+        do
+        {
+            BasicLib.cls();
+            System.out.println("+--------- 🏠 MENU 🏠 ----------+");
+            System.out.println("|  [1] Player 👤 VS Player 👤   |");
+            System.out.println("|  [2] Player 👤 VS Computer 💻 |");
+            System.out.println("+--------- 🏠 MENU 🏠 ----------+");
+            key = Leggi.unInt();
+        }
+        while(key < 1 || key > 2);
+        
+        BasicLib.cls();
+        stampaMat(mat);
+        System.out.print("\n⮞⮞ Turno: " + turn + " ⮜⮜");
+        switch(key)
+        {
+            case 1:{
+                vsGiocatore(mat, turn);
+                break;
+            }
+            
+            case 2:{
+                vsComputer(mat, turn);
+                break;
+            }
+        }
     }
     
-    static void controlloAI()
+    //----------------- MAIN VS PLAYER -----------------
+    static void vsGiocatore(int[][] mat, int turn)
     {
+        int win;
         
+        //win = 1 --> vittoria p1 / win = 2 --> vittoria p2
+        win = 0;
+        while(win == 0)
+        {
+            win = controlloPed(mat, turn);
+            stampaMat(mat);
+            
+            //cambio turno
+            switch(turn)
+            {
+                case 1:{
+                    turn = 2;
+                    break;
+                }
+                
+                case 2:{
+                    turn = 1;
+                    break;
+                }
+            }
+            
+            System.out.print("\n⮞⮞ Turno: " + turn + " ⮜⮜");
+        }
+        
+        BasicLib.cls();
+        stampaMat(mat);
+        System.out.print("\n🌟IL GIOCATORE " + win + " HA VINTO!🌟");
     }
     
+    //----------------- MAIN VS PC -----------------
+    static void vsComputer(int[][] mat, int turn)
+    {
+        controlloAI();
+    }
+    
+    //----------------- STAMPA MAT -----------------
     static void stampaMat(int[][] mat) 
     {
         int i, j, p, mod;
         
+        //stampo indice colonna + 1
         System.out.print(" ");
         for(i = 1; i < mat[0].length + 1; i++)
         {
@@ -71,6 +137,7 @@ class ForzaQuattro {
             }
             System.out.print("\n");
             
+            //cambio modalità cornice riga/colonna
             switch(mod)
             {
                 case 0:{
@@ -86,6 +153,7 @@ class ForzaQuattro {
         }
     }
     
+    //----------------- AGGIORNA MAT -----------------
     static int aggiornaMat(int[][] mat, int turn, int pos)
     {
         int win;
@@ -108,6 +176,29 @@ class ForzaQuattro {
         return 0;
     }
     
+    //----------------- CONTROLLO PEDINA -----------------
+    static int controlloPed(int[][] mat, int turn)
+    {
+        int key, win;
+        key = Leggi.unInt();
+        
+        //controllo input
+        while(key > mat.length + 1 || key < 1)
+        {
+            BasicLib.cls();
+            stampaMat(mat);
+            System.out.println("\n⚠️Valore non valido, reinserire ⚠️");
+            key = Leggi.unInt();
+            BasicLib.cls();
+        }
+        win = aggiornaMat(mat, turn, key - 1);
+        
+        BasicLib.cls();
+        
+        return win;
+    }
+    
+    //----------------- CONTROLLO VITTORIA -----------------
     static int controlloVittoria(int[][] mat, int turn, int posR, int posC)
     {
         int i, j, x, y, somma;
@@ -192,62 +283,12 @@ class ForzaQuattro {
         return 0;
     }
     
-    //controllo dove il giocatore mette la pedina e stampo la posizione all'inizio
-    static int controlloPed(int[][] mat, int turn)
+    static void controlloAI()
     {
-        int key, win;
-        key = Leggi.unInt();
         
-        while(key > mat.length + 1 || key < 1)
-        {
-            BasicLib.cls();
-            stampaMat(mat);
-            System.out.println("\n⚠️Valore non valido, reinserire ⚠️");
-            key = Leggi.unInt();
-            BasicLib.cls();
-        }
-        win = aggiornaMat(mat, turn, key - 1);
-        
-        BasicLib.cls();
-        
-        return win;
     }
     
-    static void vsGiocatore(int[][] mat, int turn)
-    {
-        int win;
-        
-        win = 0;
-        while(win == 0)
-        {
-            win = controlloPed(mat, turn);
-            stampaMat(mat);
-            
-            switch(turn)
-            {
-                case 1:{
-                    turn = 2;
-                    break;
-                }
-                
-                case 2:{
-                    turn = 1;
-                    break;
-                }
-            }
-            
-            System.out.print("\n⮞⮞ Turno: " + turn + " ⮜⮜");
-        }
-        
-        BasicLib.cls();
-        System.out.print("\n🌟IL GIOCATORE " + win + " HA VINTO!🌟");
-    }
-    
-    static void vsComputer(int[][] mat, int turn)
-    {
-        controlloAI();
-    }
-    
+    //----------------- MAIN -----------------
     public static void main(String[] a) {
         int[][] mat;
         int l, turn;
@@ -256,9 +297,6 @@ class ForzaQuattro {
         l = 6;
         mat = new int[l][l + 1];
         
-        stampaMat(mat);
-        System.out.print("\n⮞⮞ Turno: " + turn + " ⮜⮜");
-        vsGiocatore(mat, turn);
-        //vsComputer(mat, turn);
+        menu(mat, turn);
     }
 }
